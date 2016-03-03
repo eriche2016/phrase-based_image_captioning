@@ -1,6 +1,5 @@
-# Parsing captions and get chunk phrases out of them(may add a .sh file to run the preprocessing in one shot)
-
-## parsing dataset for extracting chunks
+# Parsing captions and get chunk phrases out of them
+## parsing dataset for extracting chunks(may add a .sh file to run the preprocessing in one shot)
 
 After pre-processing, data is organized as follows in _output_dir_:
 ```
