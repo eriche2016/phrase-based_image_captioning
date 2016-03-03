@@ -1,4 +1,4 @@
-# Parsing captions and get chunk phrases out of them
+# Parsing captions and get chunk phrases out of them(may add a .sh file to run the preprocessing in one shot)
 
 ## parsing dataset for extracting chunks
 
@@ -61,7 +61,7 @@ This step assumes that each input line contains the image id in first column,
 then image captions in the next columns. Each column is separated by tabulation
 character.
 ```
-lua chunking/parse.lua "$input_file" "$output_dir"
+th chunking/parse.lua "$input_file" "$output_dir"
 ```
 
 ### tokenize sentence
@@ -76,10 +76,10 @@ java -cp third_party/stanford-parser.jar \
 ### normalize token for SENNA
 Preparing text data for chunking with SENNA.
 ```
-lua chunking/normalize_token.lua "$output_dir"
+th chunking/normalize_token.lua "$output_dir"
 ```
 
-### do chunking with SENNA
+### do chunking with SENNA(run file run.sh instead)
 ```
 cd third_party/senna
 senna \
@@ -94,32 +94,31 @@ cd ../..
 
 ### get chunk size
 ```
-lua chunking/chunksize.lua "$output_dir"
+th chunking/chunksize.lua "$output_dir"
 ```
 
 ### normalize phrases
 Merging some phrases into longer verbal phrases or prepositional phrases.
 ```
-lua chunking/normalize_phrases.lua "$output_dir"
+th chunking/normalize_phrases.lua "$output_dir"
 ```
 
 ## building vocabularies for phrases
 
 ### get noun phrases, verbal phrases and prepositional phrases
 ```
-mkdir vocab
-lua phrases/get_phrases.lua "NP" "$output_dir"
-lua phrases/get_phrases.lua "VP" "$output_dir"
-lua phrases/get_phrases.lua "PP" "$output_dir"
+th phrases/get_phrases.lua "NP" "$output_dir"
+th phrases/get_phrases.lua "VP" "$output_dir"
+th phrases/get_phrases.lua "PP" "$output_dir"
 ```
 
 ### associate phrases with images
 Here a threshold can be set to remove rare phrases, and reduce the vocabulary
 size at the same time.
 ```
-lua phrases/image_phrases.lua "NP" "$output_dir" 10
-lua phrases/image_phrases.lua "VP" "$output_dir" 10
-lua phrases/image_phrases.lua "PP" "$output_dir" 10
+th phrases/image_phrases.lua "NP" "$output_dir" 10
+th phrases/image_phrases.lua "VP" "$output_dir" 10
+th phrases/image_phrases.lua "PP" "$output_dir" 10
 ```
 
 
@@ -148,14 +147,13 @@ cd ..
 
 ### get transition probabilities between phrase pairs
 ```
-cd lm
-th transition-proba-biphrase.lua "$output_dir" 10 NP-PP NP
-th transition-proba-biphrase.lua "$output_dir" 10 NP-VP NP
-th transition-proba-biphrase.lua "$output_dir" 10 PP-NP VP
-th transition-proba-biphrase.lua "$output_dir" 10 VP-NP VP
-th transition-proba-biphrase.lua "$output_dir" 10 PP-NP PP
-th transition-proba-biphrase.lua "$output_dir" 10 VP-NP PP
-cd ..
+th lm/transition-proba-biphrase.lua "$output_dir" 10 NP-PP NP
+th lm/transition-proba-biphrase.lua "$output_dir" 10 NP-VP NP
+th lm/transition-proba-biphrase.lua "$output_dir" 10 PP-NP VP
+th lm/transition-proba-biphrase.lua "$output_dir" 10 VP-NP VP
+th lm/transition-proba-biphrase.lua "$output_dir" 10 PP-NP PP
+th lm/transition-proba-biphrase.lua "$output_dir" 10 VP-NP PP
+
 ```
 
 # Training a bilinear model for learning metric between images and phrases
